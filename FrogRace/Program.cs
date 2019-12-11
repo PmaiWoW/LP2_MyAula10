@@ -5,8 +5,13 @@ namespace FrogRace
 {
     class Program
     {
+        private static Random rnd;
+        private static object threadLock = new object();
+
         static void Main(string[] args)
         {
+            rnd = new Random();
+
             Thread frog1 = new Thread(FrogRace);
             Thread frog2 = new Thread(FrogRace);
             Thread frog3 = new Thread(FrogRace);
@@ -22,14 +27,18 @@ namespace FrogRace
         {
             int ID = (int)frogID;
             int jumpNum = 0;
-            Random rnd = new Random();
 
             for (int i = 0; i < 10; i++)
             {
+                int waitForMillis;
+                lock (threadLock)
+                {
+                    waitForMillis = rnd.Next(1000);
+                }
                 Console.WriteLine($"Frog {ID} made jump number " +
                     $"{jumpNum + 1}!");
                 jumpNum++;
-                Thread.Sleep(rnd.Next(1000));
+                Thread.Sleep(waitForMillis);
             }
         }
     }
